@@ -39,9 +39,8 @@ func makeJob(filter: String, ppd: String, raster: String, out dst: String) -> Ne
     posix_spawn_file_actions_adddup2(&fa, sb, 4)
     posix_spawn_file_actions_addopen(&fa, 2, "/dev/null", O_WRONLY, 0)
     let argv = [filter, "1", "user", "job", "1", "PageSize=A4", raster].map { strdup($0) } + [nil]
-    var env = ProcessInfo.processInfo.environment
-    env["PPD"] = ppd
-    let envp = env.map { strdup("\($0)=\($1)") } + [nil]
+    // The closed-source driver gets only what it needs, not whatever happens to be in the caller's environment.
+    let envp = [strdup("PPD=\(ppd)"), nil]
     var pid: pid_t = 0
     guard posix_spawn(&pid, filter, &fa, nil, argv, envp) == 0 else { die("cannot start the printer driver") }
     close(outW); close(bcR); close(sb)

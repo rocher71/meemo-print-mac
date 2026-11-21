@@ -6,7 +6,7 @@
 #   (create the profile once with: xcrun notarytool store-credentials name)
 set -euo pipefail
 cd "$(dirname "$0")"
-VERSION=1.2.0
+VERSION=1.2.1
 APP="build/MEEMO Print.app"; RES="$APP/Contents/Resources"
 rm -rf build; mkdir build
 
@@ -24,6 +24,11 @@ P="$APP/Contents/Info.plist"
 plutil -replace CFBundleIdentifier -string io.github.rocher71.meemo-print "$P"
 plutil -replace CFBundleShortVersionString -string "$VERSION" "$P"
 plutil -replace LSMinimumSystemVersion -string 12.0 "$P"
+# osacompile adds usage strings for the camera, microphone, contacts and so on. The app uses none of them.
+for k in AppleEvents AppleMusic Calendars Camera Contacts HomeKit Microphone PhotoLibrary Reminders Siri SystemAdministration; do
+  plutil -remove "NS${k}UsageDescription" "$P"
+done
+plutil -replace CFBundleDocumentTypes -json '[{"CFBundleTypeRole":"Viewer","LSItemContentTypes":["com.adobe.pdf"]}]' "$P"
 plutil -replace NSBluetoothAlwaysUsageDescription -string "MEEMO Print uses Bluetooth to send pages to your printer." "$P"
 
 cat > build/ent.plist <<'EOF'

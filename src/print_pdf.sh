@@ -30,8 +30,8 @@ if [ -z "${SPEC// /}" ] || [ "$SPEC" = "all" ]; then
 else
   IFS=',' read -ra PARTS <<< "${SPEC// /}"
   for part in "${PARTS[@]}"; do
-    if [[ "$part" =~ ^([0-9]+)-([0-9]+)$ ]]; then a=${BASH_REMATCH[1]}; b=${BASH_REMATCH[2]}
-    elif [[ "$part" =~ ^[0-9]+$ ]]; then a=$part; b=$part
+    if [[ "$part" =~ ^([0-9]+)-([0-9]+)$ ]]; then a=$((10#${BASH_REMATCH[1]})); b=$((10#${BASH_REMATCH[2]}))
+    elif [[ "$part" =~ ^[0-9]+$ ]]; then a=$((10#$part)); b=$a
     else fail 2 "쪽 지정 형식이 이상해요: '$part' (예: 3, 1-3, 1,4,6-8)" "Can't read the page range '$part' (examples: 3, 1-3, 1,4,6-8)"; fi
     if (( a < 1 || b > PAGES || a > b )); then fail 2 "1~${PAGES}쪽 사이로 지정해 주세요: '$part'" "Pages must be between 1 and ${PAGES}: '$part'"; fi
     for ((i=a; i<=b; i++)); do LIST+=("$i"); done

@@ -1,5 +1,7 @@
 # MEEMO Print for Mac
 
+[![Downloads](https://img.shields.io/github/downloads/rocher71/meemo-print-mac/total)](https://github.com/rocher71/meemo-print-mac/releases)
+
 Print PDFs from a Mac to a **MEEMO HTP-431** A4 thermal printer over Bluetooth.
 
 With the printer's official Mac driver, printing with ⌘P over Bluetooth never finishes: the job sits in the queue and the printer does nothing. MEEMO Print is a small app that works around that. You don't need to install the driver.
