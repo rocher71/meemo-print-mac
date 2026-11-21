@@ -75,6 +75,10 @@ Needs the Xcode command line tools and an installed QY Printer driver: `build.sh
 
 To sign and notarize, set `SIGN_ID` and `NOTARY_PROFILE`; see the top of `build.sh`.
 
+## Support
+
+MEEMO Print is free. If it saved you some trouble, you can [buy me a coffee](https://buymeacoffee.com/rocher71).
+
 ## License
 
 The code in this repository is [MIT](LICENSE). Not affiliated with MEEMO or the driver's vendor.
