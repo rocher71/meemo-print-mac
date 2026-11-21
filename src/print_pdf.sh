@@ -8,8 +8,10 @@
 set -euo pipefail
 DIR="$(cd "$(dirname "$0")" && pwd)"
 H="$DIR/helper"
-PPD=/Library/Printers/PPDs/Contents/Resources/M832.ppd   # 300dpi. M08F.ppd is 203dpi and prints too small.
-FILTER=/usr/libexec/cups/filter/rastertoM08F
+# The app bundles the two vendor driver files it needs; a source checkout falls back to an installed QY Printer driver.
+PPD="$DIR/driver/M832.ppd"   # 300dpi. M08F.ppd is 203dpi and prints too small.
+FILTER="$DIR/driver/rastertoM08F"
+[ -x "$FILTER" ] || { PPD=/Library/Printers/PPDs/Contents/Resources/M832.ppd; FILTER=/usr/libexec/cups/filter/rastertoM08F; }
 LOG="$HOME/Library/Logs/MEEMOPrint.log"
 
 if defaults read -g AppleLanguages 2>/dev/null | sed -n 2p | grep -q ko; then KO=1; else KO=0; fi
@@ -48,7 +50,7 @@ echo "$(date '+%F %T') start: $PDF ($SPEC) -> $ADDR" >> "$LOG"
 k=0
 for i in "${LIST[@]}"; do k=$((k+1))
   /usr/sbin/cupsfilter -p "$PPD" -m application/vnd.cups-raster -o PageSize=A4 -o page-ranges="$i" "$PDF" > "$TMP/p.ras" 2>/dev/null
-  "$H" job "$PPD" "$TMP/p.ras" "$TMP/p.bin" 2>>"$LOG"
+  "$H" job "$FILTER" "$PPD" "$TMP/p.ras" "$TMP/p.bin" 2>>"$LOG"
   [ "${DRY:-}" = 1 ] && { echo "dry page $i: $(wc -c < "$TMP/p.bin") bytes"; continue; }
   # HOLD: seconds to keep the Bluetooth link open after the last byte. Raise it if pages come out cut off.
   HOLD="${HOLD:-6}" "$H" send "$ADDR" < "$TMP/p.bin" >/dev/null 2>>"$LOG" \

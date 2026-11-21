@@ -1,7 +1,7 @@
 // MEEMO Print helper.
 //   helper pages <pdf>               print the page count
 //   helper devices                   list paired Bluetooth devices as "address<TAB>name"
-//   helper job <ppd> <raster> <out>  run the vendor driver offline and save the printer command data
+//   helper job <filter> <ppd> <raster> <out>  run the vendor driver offline and save the printer command data
 //   helper send <address>            stdin -> printer (RFCOMM channel 1); HOLD=<seconds> to keep the link open after EOF
 import Foundation
 import IOBluetooth
@@ -14,7 +14,7 @@ func die(_ msg: String, _ code: Int32 = 1) -> Never {
 
 /// CUPS raster -> printer commands. Runs the vendor filter (rastertoM08F) and answers the status queries it sends
 /// to the printer. macOS never relays those answers over Bluetooth, which is why normal printing hangs forever.
-func makeJob(ppd: String, raster: String, out dst: String) -> Never {
+func makeJob(filter: String, ppd: String, raster: String, out dst: String) -> Never {
     // query -> reply, measured from a real HTP-431: firmware version, paper OK (0x89; 0x88 = no paper), status, battery
     let replies: [([UInt8], [UInt8])] = [
         ([0x1f, 0x11, 0x07], [0x1a, 0x07, 0x02, 0x01, 0x08]),
@@ -37,7 +37,6 @@ func makeJob(ppd: String, raster: String, out dst: String) -> Never {
     posix_spawn_file_actions_adddup2(&fa, bcR, 3)
     posix_spawn_file_actions_adddup2(&fa, sb, 4)
     posix_spawn_file_actions_addopen(&fa, 2, "/dev/null", O_WRONLY, 0)
-    let filter = "/usr/libexec/cups/filter/rastertoM08F"
     let argv = [filter, "1", "user", "job", "1", "PageSize=A4", raster].map { strdup($0) } + [nil]
     var env = ProcessInfo.processInfo.environment
     env["PPD"] = ppd
@@ -141,7 +140,7 @@ case ("devices", 2):
     for d in (IOBluetoothDevice.pairedDevices() as? [IOBluetoothDevice]) ?? [] {
         print("\(d.addressString ?? "")\t\(d.name ?? "")")
     }
-case ("job", 5): makeJob(ppd: args[2], raster: args[3], out: args[4])
+case ("job", 6): makeJob(filter: args[2], ppd: args[3], raster: args[4], out: args[5])
 case ("send", 3): relay(to: args[2])
-default: die("usage: helper pages <pdf> | devices | job <ppd> <raster> <out> | send <address>", 64)
+default: die("usage: helper pages <pdf> | devices | job <filter> <ppd> <raster> <out> | send <address>", 64)
 }

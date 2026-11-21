@@ -1,11 +1,12 @@
 #!/bin/bash
-# Build "MEEMO Print.app" and MEEMO-Print.dmg into build/. Needs Xcode command line tools.
+# Build "MEEMO Print.app" and MEEMO-Print.dmg into build/. Needs Xcode command line tools and, to bundle the
+# two vendor driver files, an installed QY Printer driver (they are copied from the system, never stored in git).
 #   ./build.sh                                   unsigned (ad-hoc) build
 #   SIGN_ID="Developer ID Application: ..." NOTARY_PROFILE=name ./build.sh    signed + notarized
 #   (create the profile once with: xcrun notarytool store-credentials name)
 set -euo pipefail
 cd "$(dirname "$0")"
-VERSION=1.0.0
+VERSION=1.1.0
 APP="build/MEEMO Print.app"; RES="$APP/Contents/Resources"
 rm -rf build; mkdir build
 
@@ -15,6 +16,9 @@ for arch in arm64 x86_64; do
 done
 lipo -create build/helper-arm64 build/helper-x86_64 -output "$RES/helper"; rm build/helper-*
 cp src/print_pdf.sh src/bg_print.sh "$RES/"; chmod +x "$RES"/*.sh
+# Vendor files go in untouched, keeping the vendor's own signature.
+mkdir "$RES/driver"
+cp /usr/libexec/cups/filter/rastertoM08F /Library/Printers/PPDs/Contents/Resources/M832.ppd "$RES/driver/"
 
 P="$APP/Contents/Info.plist"
 plutil -replace CFBundleIdentifier -string io.github.rocher71.meemo-print "$P"
