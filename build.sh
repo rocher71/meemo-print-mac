@@ -1,5 +1,5 @@
 #!/bin/bash
-# Build "MEEMO Print.app" and MEEMO-Print.zip into build/. Needs Xcode command line tools.
+# Build "MEEMO Print.app" and MEEMO-Print.dmg into build/. Needs Xcode command line tools.
 #   ./build.sh                                   unsigned (ad-hoc) build
 #   SIGN_ID="Developer ID Application: ..." NOTARY_PROFILE=name ./build.sh    signed + notarized
 #   (create the profile once with: xcrun notarytool store-credentials name)
@@ -32,10 +32,12 @@ codesign --force --options runtime $TS --entitlements build/ent.plist -s "$ID" "
 codesign --force --options runtime $TS --entitlements build/ent.plist -s "$ID" "$APP"
 rm build/ent.plist
 
-zipit() { rm -f build/MEEMO-Print.zip; ditto -c -k --keepParent "$APP" build/MEEMO-Print.zip; }
-zipit
+DMG=build/MEEMO-Print.dmg
+mkdir build/dmg; ditto "$APP" "build/dmg/MEEMO Print.app"; ln -s /Applications build/dmg/Applications
+hdiutil create -quiet -volname "MEEMO Print" -srcfolder build/dmg -ov -format UDZO "$DMG"; rm -rf build/dmg
+if [ "$ID" != - ]; then codesign --timestamp -s "$ID" "$DMG"; fi
 if [ -n "${NOTARY_PROFILE:-}" ]; then
-  xcrun notarytool submit build/MEEMO-Print.zip --keychain-profile "$NOTARY_PROFILE" --wait
-  xcrun stapler staple "$APP"; zipit
+  xcrun notarytool submit "$DMG" --keychain-profile "$NOTARY_PROFILE" --wait
+  xcrun stapler staple "$DMG"
 fi
-echo "built build/MEEMO-Print.zip ($ID)"
+echo "built build/MEEMO-Print.dmg ($ID)"

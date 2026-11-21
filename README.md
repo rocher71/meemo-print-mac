@@ -10,7 +10,7 @@ The printer's official Mac driver installs fine, but printing with ⌘P over Blu
 
 1. Install the official Mac driver that came with your printer (QY Printer).
 2. Pair the printer in System Settings > Bluetooth. It shows up as `HTP-431`.
-3. Download [MEEMO-Print.zip](https://github.com/rocher71/meemo-print-mac/releases/latest/download/MEEMO-Print.zip), unzip it, and move **MEEMO Print** to Applications.
+3. Download [MEEMO-Print.dmg](https://github.com/rocher71/meemo-print-mac/releases/latest/download/MEEMO-Print.dmg), open it, and drag **MEEMO Print** onto Applications.
 4. Drag a PDF onto the app icon. Print everything or pick pages (`3`, `1-3`, `1,4,6-8`).
 
 The app is not notarized by Apple, so the first launch needs one extra step: open it once, then go to System Settings > Privacy & Security and click **Open Anyway**. The [setup guide](https://rocher71.github.io/meemo-print-mac/) walks through this.
@@ -70,7 +70,7 @@ DRY=1 "$R/print_pdf.sh" file.pdf      # build the print data without sending it
 Needs the Xcode command line tools.
 
 ```sh
-./build.sh    # -> build/MEEMO Print.app and build/MEEMO-Print.zip
+./build.sh    # -> build/MEEMO Print.app and build/MEEMO-Print.dmg
 ```
 
 To sign and notarize, set `SIGN_ID` and `NOTARY_PROFILE`; see the top of `build.sh`.
