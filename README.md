@@ -12,7 +12,7 @@ With the printer's official Mac driver, printing with ⌘P over Bluetooth never 
 2. Download [MEEMO-Print.dmg](https://github.com/rocher71/meemo-print-mac/releases/latest/download/MEEMO-Print.dmg), open it, and drag **MEEMO Print** onto Applications.
 3. Drag a PDF onto the app icon. Print everything or pick pages (`3`, `1-3`, `1,4,6-8`).
 
-The app is not notarized by Apple, so the first launch needs one extra step: open it once, then go to System Settings > Privacy & Security and click **Open Anyway**. The [setup guide](https://rocher71.github.io/meemo-print-mac/) walks through this.
+The app is signed and notarized by Apple, so it opens without security warnings.
 
 Each page takes about a minute. The app's messages are in Korean when the Mac's language is Korean and in English otherwise.
 
