@@ -4,7 +4,7 @@ Print PDFs from a Mac to a **MEEMO HTP-431** A4 thermal printer over Bluetooth.
 
 With the printer's official Mac driver, printing with ⌘P over Bluetooth never finishes: the job sits in the queue and the printer does nothing. MEEMO Print is a small app that works around that. You don't need to install the driver.
 
-**[Download and setup guide (English / 한국어)](https://rocher71.github.io/meemo-print-mac/)**
+**[Download and setup guide](https://rocher71.github.io/meemo-print-mac/)** · 한국어 안내도 같은 페이지에서 볼 수 있습니다.
 
 ## Use it
 
@@ -12,16 +12,17 @@ With the printer's official Mac driver, printing with ⌘P over Bluetooth never 
 2. Download [MEEMO-Print.dmg](https://github.com/rocher71/meemo-print-mac/releases/latest/download/MEEMO-Print.dmg), open it, and drag **MEEMO Print** onto Applications.
 3. Open MEEMO Print and choose a PDF, or drag a PDF onto the app icon. Print everything or pick pages (`3`, `1-3`, `1,4,6-8`).
 
-On first launch the app offers to put a shortcut on the Desktop.
+Good to know:
 
-The app is signed and notarized by Apple, so it opens without security warnings.
-
-Each page takes about a minute. The app's messages are in Korean when the Mac's language is Korean and in English otherwise.
+- The app is signed and notarized by Apple, so it opens without security warnings.
+- The first time you open it, it offers to put a shortcut on your Desktop, and macOS asks whether it may use Bluetooth.
+- Each page takes about a minute. You get a notification when the job finishes.
+- Messages are in Korean when the Mac's language is Korean, and in English otherwise.
 
 ## Requirements
 
 - macOS 12 or later, Apple Silicon or Intel
-- MEEMO HTP-431. Other models are untested.
+- MEEMO HTP-431 with A4 paper. Other models are untested.
 - Rosetta on Apple Silicon Macs, because the bundled vendor driver is Intel-only. The app offers to install it.
 
 ## Troubleshooting
@@ -31,6 +32,7 @@ Each page takes about a minute. The app's messages are in Korean when the Mac's 
 | Blank page comes out | The thermal paper is upside down. Flip it. |
 | "Couldn't reach the printer" | Turn the printer off and on, then try again. |
 | "No paired printer found" | Pair `HTP-431` in System Settings > Bluetooth. |
+| It asks to install Rosetta | Click **Install Rosetta** and enter your Mac password. It is Apple's own add-on and only needed once. |
 | A stuck ⌘P job is holding the printer | Delete the job, remove the printer from Printers & Scanners, and power-cycle the printer. |
 
 The log is at `~/Library/Logs/MEEMOPrint.log`.
@@ -49,7 +51,7 @@ Because the status replies are canned, the app cannot tell you when the printer 
 
 | File | Role |
 | --- | --- |
-| `src/droplet.applescript` | The app: drag-and-drop and dialogs |
+| `src/droplet.applescript` | The app: file picker, drag-and-drop, dialogs |
 | `src/print_pdf.sh` | The pipeline, one page at a time |
 | `src/bg_print.sh` | Runs the pipeline in the background and reports the result |
 | `src/helper.swift` | Page count, paired devices, driver runner, Bluetooth sender, Desktop shortcut |
@@ -73,7 +75,7 @@ Needs the Xcode command line tools and an installed QY Printer driver: `build.sh
 ./build.sh    # -> build/MEEMO Print.app and build/MEEMO-Print.dmg
 ```
 
-To sign and notarize, set `SIGN_ID` and `NOTARY_PROFILE`; see the top of `build.sh`.
+Without options the build is ad-hoc signed, which is fine for your own Mac. To sign and notarize for distribution, set `SIGN_ID` and `NOTARY_PROFILE`; see the top of `build.sh`.
 
 ## Support
 
