@@ -2,6 +2,7 @@
 //   helper pages <pdf>               print the page count
 //   helper devices                   list paired Bluetooth devices as "address<TAB>name"
 //   helper job <filter> <ppd> <raster> <out>  run the vendor driver offline and save the printer command data
+//   helper alias <app> <dest>        create a Finder alias (a shortcut that accepts dropped files)
 //   helper send <address>            stdin -> printer (RFCOMM channel 1); HOLD=<seconds> to keep the link open after EOF
 import Foundation
 import IOBluetooth
@@ -142,5 +143,11 @@ case ("devices", 2):
     }
 case ("job", 6): makeJob(filter: args[2], ppd: args[3], raster: args[4], out: args[5])
 case ("send", 3): relay(to: args[2])
-default: die("usage: helper pages <pdf> | devices | job <filter> <ppd> <raster> <out> | send <address>", 64)
+case ("alias", 4):
+    // A bookmark file is what Finder calls an alias. Writing it ourselves avoids asking for permission to control Finder.
+    do {
+        let data = try URL(fileURLWithPath: args[2]).bookmarkData(options: .suitableForBookmarkFile, includingResourceValuesForKeys: nil, relativeTo: nil)
+        try URL.writeBookmarkData(data, to: URL(fileURLWithPath: args[3]))
+    } catch { die(error.localizedDescription) }
+default: die("usage: helper pages <pdf> | devices | job <filter> <ppd> <raster> <out> | send <address> | alias <app> <dest>", 64)
 }

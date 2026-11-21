@@ -1,5 +1,6 @@
 property T : "MEEMO Print"
 property SITE : "https://rocher71.github.io/meemo-print-mac/"
+property DOM : "io.github.rocher71.meemo-print"
 
 -- Korean if the Mac's first language is Korean, English otherwise.
 on L(ko, en)
@@ -9,9 +10,35 @@ on L(ko, en)
 	return en
 end L
 
+-- Double-clicking the app: offer a Desktop shortcut once, then ask which PDF to print.
 on run
-	display dialog L("인쇄할 PDF 파일을 이 아이콘 위에 끌어다 놓으세요." & return & "(프린터 전원 켜기 · 용지 방향 확인)", "Drag a PDF file onto this icon to print it." & return & "(Turn the printer on · check the paper direction)") buttons {"OK"} default button 1 with title T
+	my offerShortcut()
+	try
+		set f to choose file with prompt L("인쇄할 PDF 파일을 고르세요. (프린터 전원 켜기 · 용지 방향 확인)", "Choose a PDF to print. (Turn the printer on · check the paper direction)") of type {"com.adobe.pdf"}
+	on error number -128
+		return
+	end try
+	my printOne(POSIX path of f)
 end run
+
+on offerShortcut()
+	set me_ to POSIX path of (path to me)
+	-- Only once, and only when installed: a shortcut to a copy still inside the disk image would break.
+	if me_ does not start with "/Applications/" then return
+	try
+		do shell script "defaults read " & DOM & " askedShortcut"
+		return
+	end try
+	do shell script "defaults write " & DOM & " askedShortcut -bool true"
+	set b to L("만들기", "Create")
+	if button returned of (display dialog L("바탕화면에 MEEMO Print 바로가기를 만들까요?" & return & return & "바로가기를 두 번 클릭하거나, PDF를 그 위에 끌어다 놓으면 인쇄할 수 있어요.", "Put a MEEMO Print shortcut on your Desktop?" & return & return & "Double-click it, or drag a PDF onto it, to print.") buttons {L("괜찮아요", "No Thanks"), b} default button 2 with title T) is b then
+		try
+			do shell script quoted form of (me_ & "Contents/Resources/helper") & " alias " & quoted form of me_ & " " & quoted form of ((POSIX path of (path to desktop)) & "MEEMO Print")
+		on error e
+			display dialog e buttons {"OK"} default button 1 with title T
+		end try
+	end if
+end offerShortcut
 
 on open theFiles
 	repeat with f in theFiles

@@ -6,7 +6,7 @@
 #   (create the profile once with: xcrun notarytool store-credentials name)
 set -euo pipefail
 cd "$(dirname "$0")"
-VERSION=1.1.0
+VERSION=1.2.0
 APP="build/MEEMO Print.app"; RES="$APP/Contents/Resources"
 rm -rf build; mkdir build
 

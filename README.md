@@ -2,7 +2,7 @@
 
 Print PDFs from a Mac to a **MEEMO HTP-431** A4 thermal printer over Bluetooth.
 
-With the printer's official Mac driver, printing with ⌘P over Bluetooth never finishes: the job sits in the queue and the printer does nothing. MEEMO Print is a small drag-and-drop app that works around that. You don't need to install the driver.
+With the printer's official Mac driver, printing with ⌘P over Bluetooth never finishes: the job sits in the queue and the printer does nothing. MEEMO Print is a small app that works around that. You don't need to install the driver.
 
 **[Download and setup guide (English / 한국어)](https://rocher71.github.io/meemo-print-mac/)**
 
@@ -10,7 +10,9 @@ With the printer's official Mac driver, printing with ⌘P over Bluetooth never 
 
 1. Pair the printer in System Settings > Bluetooth. It shows up as `HTP-431`.
 2. Download [MEEMO-Print.dmg](https://github.com/rocher71/meemo-print-mac/releases/latest/download/MEEMO-Print.dmg), open it, and drag **MEEMO Print** onto Applications.
-3. Drag a PDF onto the app icon. Print everything or pick pages (`3`, `1-3`, `1,4,6-8`).
+3. Open MEEMO Print and choose a PDF, or drag a PDF onto the app icon. Print everything or pick pages (`3`, `1-3`, `1,4,6-8`).
+
+On first launch the app offers to put a shortcut on the Desktop.
 
 The app is signed and notarized by Apple, so it opens without security warnings.
 
@@ -50,7 +52,7 @@ Because the status replies are canned, the app cannot tell you when the printer 
 | `src/droplet.applescript` | The app: drag-and-drop and dialogs |
 | `src/print_pdf.sh` | The pipeline, one page at a time |
 | `src/bg_print.sh` | Runs the pipeline in the background and reports the result |
-| `src/helper.swift` | Page count, paired devices, driver runner, Bluetooth sender |
+| `src/helper.swift` | Page count, paired devices, driver runner, Bluetooth sender, Desktop shortcut |
 
 ## Command line
 
